@@ -1,0 +1,316 @@
+openapi: 3.0.1
+info:
+  title: Default module
+  description: ''
+  version: 1.0.0
+tags: []
+paths:
+  /chat:
+    post:
+      summary: chatRoomCreate
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: Bearer {{access_token}}
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                space_id:
+                  type: integer
+              required:
+                - space_id
+            example:
+              space_id: 5
+        required: true
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      chat_room_id:
+                        type: integer
+                    required:
+                      - chat_room_id
+                required:
+                  - message
+                  - data
+              example:
+                message: >-
+                  Tersus voco ascisco. Corrupti arguo omnis alius super
+                  conscendo asper casus. Delectatio vigor aegre cumque.
+                data:
+                  chat_room_id: 26
+          headers: {}
+      security: []
+    get:
+      summary: myChatRoomListSearch
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: Bearer {{access_token}}
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      chat_rooms:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/chatRoomListSearchResponse'
+                    required:
+                      - chat_rooms
+                required:
+                  - message
+                  - data
+              example:
+                message: >-
+                  Defaeco volva vulnus adopto tantillus id subvenio corporis.
+                  Vito temeritas subnecto ea abbas crur vesica pax absum
+                  perferendis. Capio vilis timor vomito.
+                data:
+                  chat_rooms:
+                    - chat_room_id: 46
+                      space:
+                        id: 71
+                        name: Jackie Gottlieb
+                      host:
+                        id: '88'
+                        name: Dr. Frederick Kertzmann
+                      seller:
+                        id: '9'
+                        name: Penny Bartoletti
+                      created_at: '2026-03-24T10:21:46.139Z'
+                    - chat_room_id: 10
+                      space:
+                        id: 59
+                        name: Sheila Wolff
+                      host:
+                        id: '26'
+                        name: Renee Schinner
+                      seller:
+                        id: '1'
+                        name: Penny Shields
+                      created_at: '2026-03-23T11:18:19.975Z'
+                    - chat_room_id: 90
+                      space:
+                        id: 50
+                        name: Alfonso Denesik
+                      host:
+                        id: '94'
+                        name: Dr. Jessie Gutkowski
+                      seller:
+                        id: '14'
+                        name: Elias Kub
+                      created_at: '2026-03-23T16:34:43.576Z'
+      security: []
+  /chat/{chat-room-id}/messages:
+    get:
+      summary: chatMessageHistorySearch
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: chat-room-id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          description: ''
+          required: true
+          example: Bearer {{access_token}}
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      chat_room_id:
+                        type: integer
+                      messages:
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/chatMessageHistorySearchResponse
+                    required:
+                      - chat_room_id
+                      - messages
+                required:
+                  - message
+                  - data
+              example:
+                message: >-
+                  Utpote molestias corrupti aperio explicabo. Aegrotatio caveo
+                  defero vesper aeternus libero. Verus deludo benigne
+                  truculenter.
+                data:
+                  chat_room_id: 36
+                  messages:
+                    - message_id: 94
+                      sender_name: Dr. Louis Pollich-Bechtelar
+                      sender_id: '90'
+                      content: >-
+                        Tertius timor arbor. Vorago reprehenderit venia denuncio
+                        dedico delego. Praesentium cedo debilito viscus
+                        doloribus caelum.
+                      is_read: false
+                      created_at: '2026-03-23T16:25:44.958Z'
+                    - message_id: 39
+                      sender_name: Lucy Block
+                      sender_id: '59'
+                      content: >-
+                        Valens aureus allatus. Virgo complectus nam suscipit
+                        aestas crur aliqua consectetur impedit solio. Vigor
+                        celer peccatus surgo carus caecus.
+                      is_read: false
+                      created_at: '2026-03-23T15:26:30.272Z'
+                    - message_id: 34
+                      sender_name: Edgar Bauch-Lemke
+                      sender_id: '89'
+                      content: >-
+                        Communis thalassinus strues talus nobis. Sit vitium suus
+                        desipio curtus suscipio vorago. Comparo color acervus
+                        viduo ut aperio arbitro depraedor provident.
+                      is_read: false
+                      created_at: '2026-03-23T12:11:09.097Z'
+      security: []
+components:
+  schemas:
+    chatRoomCreateRequest:
+      type: object
+      properties:
+        space_id:
+          type: integer
+      required:
+        - space_id
+    chatRoomCreateResponse:
+      type: object
+      properties:
+        chat_room_id:
+          type: integer
+      required:
+        - chat_room_id
+    chatRoomListSearchResponse:
+      type: object
+      properties:
+        chat_room_id:
+          type: integer
+        space:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+          required:
+            - id
+            - name
+        host:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+          required:
+            - id
+            - name
+        seller:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+          required:
+            - id
+            - name
+        created_at:
+          type: string
+      required:
+        - chat_room_id
+        - host
+        - created_at
+        - seller
+        - space
+    chatMessageHistorySearchResponse:
+      type: object
+      properties:
+        message_id:
+          type: integer
+        sender_name:
+          type: string
+        sender_id:
+          type: string
+        content:
+          type: string
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+      required:
+        - sender_name
+        - content
+        - is_read
+        - created_at
+        - message_id
+        - sender_id
+    globalResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: object
+          properties: {}
+      required:
+        - message
+        - data
+  responses: {}
+  securitySchemes: {}
+servers: []
+security: []
