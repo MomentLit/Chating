@@ -1,6 +1,6 @@
 package com.example.chating.global.util;
 
-import com.example.space.global.dto.ApiResponse;
+import com.example.chating.global.dto.ApiResponse;
 
 public class ResponseUtil {
 

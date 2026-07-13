@@ -133,6 +133,9 @@ id bigint [pk, increment]
 space_id bigint [not null]
 host_id varchar [not null]
 seller_id varchar [not null]
+space_name varchar [not null, note: "채팅방 생성 시점의 공간 이름 비정규화 저장"]
+host_name varchar [not null, note: "채팅방 생성 시점의 호스트 이름 비정규화 저장"]
+seller_name varchar [not null, note: "채팅방 생성 시점의 셀러 이름 비정규화 저장"]
 created_at datetime [default: `now()`]
 }
 

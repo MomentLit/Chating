@@ -18,15 +18,29 @@
 - Internal admin space endpoints require a JWT whose role is ADMIN (Role enum), validated in the service layer; otherwise 403.
 - Internal admin space detail lookup on a deleted or missing space returns 404.
 
+## Chat Policies
+
+- Chat room creation (POST /chat) sets the authenticated user as seller and the space owner as host.
+- The space owner cannot create a chat room for their own space; this returns 400.
+- If a chat room for the same space and seller already exists, creation returns the existing chat_room_id with 201.
+- Space, host, and seller names are denormalized into the chat room at creation time and are not refreshed afterward.
+- Space and user data are fetched via internal API clients (SpaceClient: GET /spaces/{space-id}, UserClient: GET /internal/users/{user-id}); client failures return 502.
+- Chat message history is visible only to the chat room's host or seller; other users receive 403.
+- WebSocket chat topic subscriptions are validated the same way; non-participants are rejected.
+- Fetching message history (GET /chat/{chat-room-id}/messages) marks the counterpart's unread messages as read.
+- Messages are stored with is_read=false; receiving a message over WebSocket does not mark it read.
+- Sending a message to a chat room whose space is deleted is rejected with a bad request; room list and message history remain viewable.
+- Real-time messaging uses STOMP over WebSocket as documented in docs/websocket-spec.md.
+
 ## Validation Rules
 
 Visible validation rules are documented from DTO annotations, entity methods, and service methods only. Any validation behavior not present in code is Needs confirmation.
 
 ## Authorization Rules
 
-JWT stateless security is configured. GET /spaces, GET /spaces/*, and GET /spaces/*/schedule are permitAll; create/update/delete and owner schedule mutations are authenticated. The matcher order may make GET /spaces/me match the public /spaces/* rule; this requires confirmation/testing.
+JWT stateless security is configured. POST /chat, GET /chat, and GET /chat/*/messages require authentication; all other requests are permitAll. Unauthenticated requests to authenticated endpoints receive 403 with the globalResponse body (JwtAuthenticationEntryPoint).
 
-Internal admin-status and admin space lookup endpoints are permitAll at the SecurityConfig level; the ADMIN role check is performed in the service layer using the JWT role claim.
+WebSocket connections authenticate with a JWT passed in the STOMP CONNECT Authorization header; chat topic subscriptions are allowed only for chat room participants (validated in StompAuthChannelInterceptor via the service layer).
 
 ## Creation Policy
 
@@ -46,7 +60,7 @@ State transitions are documented only where visible in entity or service methods
 
 ## Exception Cases
 
-The service throws IllegalArgumentException and SecurityException directly. No @ControllerAdvice or global exception response mapper is visible. HTTP status mapping for these exceptions is Needs confirmation unless explicitly handled in code.
+GlobalExceptionHandler (@RestControllerAdvice) maps project-specific exceptions to ApiResponse.fail bodies: BadRequestException → 400, ForbiddenException → 403, ChatRoomNotFoundException and SpaceNotFoundException → 404, SpaceClientException and UserClientException → 502, unhandled exceptions → 500. WebSocket message handling errors are returned to the sender via /user/queue/errors (@MessageExceptionHandler).
 
 ## API Behavior Policy
 
