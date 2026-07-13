@@ -6,7 +6,7 @@ spring:
     name: Chating
 
   datasource:
-    url: "jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:momentlit}?currentSchema=${DB_SCHEMA:spaces}"
+    url: "jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:momentlit}?currentSchema=${DB_SCHEMA:chatings}"
     username: "${DB_USERNAME:momentlit}"
     password: "${DB_PASSWORD:momentlit1234@}"
     driver-class-name: org.postgresql.Driver
@@ -17,7 +17,7 @@ spring:
     show-sql: true
 
 jwt:
-  secret: "${JWT_SECRET:momentlit-spaces-service-jwt-secret-key-for-local-test-1234567890}"
+  secret: "${JWT_SECRET:momentlit-chating-service-jwt-secret-key-for-local-test-1234567890}"
 
 space-service:
   base-url: "${SPACE_SERVICE_BASE_URL:http://localhost:8082}"
