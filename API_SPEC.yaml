@@ -9,7 +9,10 @@ paths:
     post:
       summary: chatRoomCreate
       deprecated: false
-      description: ''
+      description: >-
+        인증된 사용자를 seller로, 공간의 소유자를 host로 하여 채팅방을 생성한다.
+        동일한 space_id와 seller 조합의 채팅방이 이미 존재하면 기존 채팅방의
+        chat_room_id를 반환한다. 공간 소유자 본인은 자기 공간에 채팅방을 생성할 수 없다.
       tags: []
       parameters:
         - name: Authorization
@@ -59,11 +62,47 @@ paths:
                 data:
                   chat_room_id: 26
           headers: {}
+        '400':
+          description: 공간 소유자 본인이 자기 공간에 채팅방 생성을 시도한 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/globalResponse'
+              example:
+                message: '[ERROR: Request/BadRequest] 본인 공간에는 채팅방을 생성할 수 없습니다.'
+                data: null
+        '403':
+          description: 인증되지 않은 요청
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/globalResponse'
+              example:
+                message: '[ERROR: Chat/Forbidden] 인증이 필요합니다.'
+                data: null
+        '404':
+          description: 공간을 찾을 수 없는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/globalResponse'
+              example:
+                message: '[ERROR: Space/NotFound] 공간을 찾을 수 없습니다.'
+                data: null
+        '502':
+          description: 공간 또는 유저 서비스 조회에 실패한 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/globalResponse'
+              example:
+                message: '[ERROR: Chat/SpaceClient] 공간 정보를 조회할 수 없습니다.'
+                data: null
       security: []
     get:
       summary: myChatRoomListSearch
       deprecated: false
-      description: ''
+      description: 인증된 사용자가 host 또는 seller로 참여 중인 채팅방 목록을 생성일 내림차순으로 반환한다.
       tags: []
       parameters:
         - name: Authorization
@@ -135,12 +174,24 @@ paths:
                         id: '14'
                         name: Elias Kub
                       created_at: '2026-03-23T16:34:43.576Z'
+        '403':
+          description: 인증되지 않은 요청
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/globalResponse'
+              example:
+                message: '[ERROR: Chat/Forbidden] 인증이 필요합니다.'
+                data: null
       security: []
   /chat/{chat-room-id}/messages:
     get:
       summary: chatMessageHistorySearch
       deprecated: false
-      description: ''
+      description: >-
+        채팅방의 메시지 내역을 생성일 오름차순으로 반환한다. 채팅방 참여자(host 또는
+        seller)만 조회할 수 있다. 조회 시 상대방이 보낸 읽지 않은 메시지는 읽음(is_read=true)
+        처리된다. 공간이 삭제된 채팅방도 내역 조회는 가능하다.
       tags: []
       parameters:
         - name: chat-room-id
@@ -217,6 +268,24 @@ paths:
                         viduo ut aperio arbitro depraedor provident.
                       is_read: false
                       created_at: '2026-03-23T12:11:09.097Z'
+        '403':
+          description: 인증되지 않았거나 채팅방 참여자가 아닌 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/globalResponse'
+              example:
+                message: '[ERROR: Space/Forbidden] 채팅방에 대한 권한이 없습니다.'
+                data: null
+        '404':
+          description: 채팅방을 찾을 수 없는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/globalResponse'
+              example:
+                message: '[ERROR: Chat/NotFound] 채팅방을 찾을 수 없습니다.'
+                data: null
       security: []
 components:
   schemas:

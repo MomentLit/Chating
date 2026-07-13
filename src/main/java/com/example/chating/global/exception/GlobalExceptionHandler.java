@@ -1,6 +1,6 @@
 package com.example.chating.global.exception;
 
-import com.example.space.global.dto.ApiResponse;
+import com.example.chating.global.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,6 +31,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<String>> scheduleNotFoundHandleException(ScheduleNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.fail("[ERROR: Space/Schedule/NotFound] " + e.getMessage()));
+    }
+
+    @ExceptionHandler(ChatRoomNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> chatRoomNotFoundHandleException(ChatRoomNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail("[ERROR: Chat/NotFound] " + e.getMessage()));
+    }
+
+    @ExceptionHandler(SpaceClientException.class)
+    public ResponseEntity<ApiResponse<String>> spaceClientHandleException(SpaceClientException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(ApiResponse.fail("[ERROR: Chat/SpaceClient] " + e.getMessage()));
+    }
+
+    @ExceptionHandler(UserClientException.class)
+    public ResponseEntity<ApiResponse<String>> userClientHandleException(UserClientException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(ApiResponse.fail("[ERROR: Chat/UserClient] " + e.getMessage()));
     }
 
     @ExceptionHandler(SpaceException.class)

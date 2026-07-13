@@ -1,5 +1,6 @@
 package com.example.chating.global.config;
 
+import com.example.chating.global.security.JwtAuthenticationEntryPoint;
 import com.example.chating.global.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -30,20 +32,14 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/spaces").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/spaces/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/spaces/*/schedule").permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/spaces").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/spaces/me").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/spaces/*").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/spaces/*").authenticated()
-
-                        .requestMatchers(HttpMethod.POST, "/spaces/*/schedule").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/spaces/*/schedule/*").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/spaces/*/schedule/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/chat").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/chat").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/chat/*/messages").authenticated()
 
                         .anyRequest().permitAll()
+                )
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
